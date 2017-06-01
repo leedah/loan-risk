@@ -148,6 +148,9 @@ def produceSVMstats(df):
 
 df = pd.read_csv('./dataSets/train.tsv', sep='\t', header=0)
 df = df.drop('Id',1) # Do not take into account the id in the classification
+
+# Convert all attributes to numerical
+
 df_num = pd.get_dummies(df)
 # print df_num
 # print "Columns: ", len(df_num.columns)
@@ -159,7 +162,8 @@ if not os.path.exists(outputDir):
 averageAccurracyArray=[0,0]
 
 # Choose between'ALL','naiveBayes','RandomForest' and 'SVM'
-crossValidation(df_num,'ALL',40)  
+#crossValidation(df_num,'SVM',2)
+crossValidation(df_num,'ALL',40)    
 
 # Find Labels for testset
 
