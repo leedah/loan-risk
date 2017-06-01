@@ -1,0 +1,7 @@
+
+Install tools for ubuntu:
+
+sudo pip install pandas
+sudo pip install seaborn
+
+Dataset should be located in a directory named 'dataSets' in the current directory.
