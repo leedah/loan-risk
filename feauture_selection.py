@@ -1,8 +1,10 @@
+from __future__ import division
 import pandas as pd
 import math
 import os
 # from scipy.stats import entropy
 import matplotlib.pyplot as plt
+
 
 
 def entropy(df):
@@ -37,41 +39,41 @@ def entropy(df):
 # 	# Calcualate entropy as: -sum(p * log(p))
 # 	return entropy(p)
 
-def informationGain(df,feature):
-# Calculate the information gain of a feature in a dataset df
+def informationGain(T,a):
+# Calculate the information gain of the attribute a in the dataset T
 
 	# Find entropy of the whole dataset
-	H_dataset = entropy(df)
+	H_T =  entropy(T)
 
-	# Find values of feature
-	count_values = df[feature].value_counts().to_dict()
-	# print "\n\ncount_values\n", count_values
-	
+	print "\n", a, ":"
+
+	# Find count of values of the attribute a
+	values = T[a].value_counts().to_dict()
 	value_sum = 0
-	IG = 0
 
-	print "\nFeature ", feature
-
-	# For every row in dataset where feature has the value v
-	for v in count_values:
-		# print "rows with value", v ,": \n", df[df[feature] == v]
+	for v in values:
+		# print "rows with value", v ,": \n", T[T[a] == v]
+		print "values", values[v]
 		
+		# Find wv: the percentage of rows in the dataset where attibute a has the value v
+		wv = values[v]/len(T)
+
 		# Find entropy of the rows of the dataset where attribute a has the value v
-		H_feature_v = entropy(df[df[feature] == v])
-		print "Value ", v, " appeared", count_values[v], "times, Entropy: ", H_feature_v
+		H_v = entropy(T[T[a] == v])
+
+		print "Value ", v, " wv ", wv, "Entropy: ", H_v
 		
-		value_sum += count_values[v]*H_feature_v
+		value_sum += wv*H_v
 		# print "=", value_sum
 
-
-	IG = H_dataset - value_sum
-	print "IG:",IG," = (H_dataset:",H_dataset, ")- (value_sum:",value_sum, ")"
+	IG = H_T - value_sum
+	print "IG:",IG," = (H_T:",H_T, ") - (value_sum:",value_sum, ")"
 	return IG
 
 
 # Read dataset
 
-df = pd.read_csv('./dataSets/train_small.tsv', sep='\t', header=0)
+df = pd.read_csv('./dataSets/train.tsv', sep='\t', header=0)
 df = df.drop('Id', 1)
 df_cat = df.drop('Label', 1) # Don't calculate information gain of Label
 
@@ -91,9 +93,6 @@ for attr in numericals:
 # entr = findEntropy(df['Label'])
 # print "Dataset  Entropy", entr
 
-# IG = informationGain(df,'Attribute2')
-
-
 # Find information gain of each feature
 
 infogain = dict()
@@ -101,9 +100,9 @@ infogain = dict()
 for feature in df_cat.columns:
 	infogain[feature] = informationGain(df,feature)
 
-print "\nInformation Gains of all features:"
+print "\nInformation Gains of all features:\n"
 for feature in sorted(infogain, key=infogain.get):
-  print feature, infogain[feature]
+  print '{: <15}'.format(feature),'{:f}'.format(infogain[feature])
 
 
 
