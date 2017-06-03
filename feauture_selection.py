@@ -2,9 +2,8 @@ from __future__ import division
 import pandas as pd
 import math
 import os
-# from scipy.stats import entropy
 import matplotlib.pyplot as plt
-
+from classification import crossValidation
 
 
 def entropy(df):
@@ -22,22 +21,6 @@ def entropy(df):
 
 	return Hp
 
-
-# def findEntropy(df):
-# # Calcluate entropy of the dataset
-	
-# 	# Find probabilities of Good and Bad clients
-# 	P = df['Label'].value_counts(normalize = True)
-
-# 	for i in  df['Label'].unique():
-# 		# print "Probability of ", i ,":", P[i] 
-# 		# print "Entropy:", P[i]*math.log(P[i])
-# 		Hp += entropy(P[i])
-
-# 	return Hp
-
-# 	# Calcualate entropy as: -sum(p * log(p))
-# 	return entropy(p)
 
 def informationGain(T,a):
 # Calculate the information gain of the attribute a in the dataset T
@@ -71,11 +54,51 @@ def informationGain(T,a):
 	return IG
 
 
+def produceRemoveFeaturePlot(df, infogain):
+    columnsList=[]
+    accuracyList=[]
+    my_xticks = []
+    
+    col = 20
+    df_num = pd.get_dummies(df)
+    accuracyList.append(crossValidation(df_num,'RandomForest',40))
+    columnsList.append(col)
+
+    for feature in sorted(infogain, key=infogain.get):
+        df=df.drop(feature,1)
+        print "\nDropping ", feature
+        col -= 1
+        if(col == 0):
+        	break
+        df_num = pd.get_dummies(df)
+        accuracyList.append(crossValidation(df_num,'RandomForest',40))
+
+        columnsList.append(col)
+        my_xticks.append(feature)
+
+    fig = plt.figure()
+    fig.canvas.set_window_title('Accuracy plot')
+
+    plt.ylim([0.6, 0.8])
+    plt.xlim([20,0])
+    plt.title('Accuracy plot')
+    plt.xlabel('Feature removed')
+    plt.ylabel('Accuracy')  
+    plt.xticks(columnsList, my_xticks, size='small', rotation = 45)
+    width = 0.8
+
+    plt.bar(columnsList,accuracyList, width, color="#00cc99")
+    plt.show()
+    fig.savefig('output/accuracyPlot.png')
+    plt.close(fig)
+
+
 # Read dataset
 
 df = pd.read_csv('./dataSets/train.tsv', sep='\t', header=0)
 df = df.drop('Id', 1)
 df_cat = df.drop('Label', 1) # Don't calculate information gain of Label
+df_i = df
 
 # Convert numerical attibutes to categorical using  5 bins
 
@@ -86,13 +109,6 @@ for attr in numericals:
 	# print df_cat[attr] 
 # print df_cat
 
-
-# entr = entropy(df)
-# print "Dataset Entropy", entr
-
-# entr = findEntropy(df['Label'])
-# print "Dataset  Entropy", entr
-
 # Find information gain of each feature
 
 infogain = dict()
@@ -102,8 +118,10 @@ for feature in df_cat.columns:
 
 print "\nInformation Gains of all features:\n"
 for feature in sorted(infogain, key=infogain.get):
-  print '{: <15}'.format(feature),'{:f}'.format(infogain[feature])
+	print '{: <15}'.format(feature),'{:f}'.format(infogain[feature])
 
+
+produceRemoveFeaturePlot(df_i, infogain)
 
 
 
