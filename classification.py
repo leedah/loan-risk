@@ -59,7 +59,7 @@ def findLabel(df,test_df):
     X_train_counts = df.drop('Label', 1)
     X_test_counts = test_df.drop('Id', 1)
 
-    yPred = classificationMethod('naiveBayes',X_train_counts,X_test_counts,df['Label'],44,44)
+    yPred = classificationMethod('RandomForest',X_train_counts,X_test_counts,df['Label'],44,44)
     print yPred
     createTestSetCategoryCSV(test_df['Id'],yPred)
 
@@ -106,7 +106,7 @@ def runAllClassificationMethods(df,nFolds,X_train_counts,X_test_counts,train_ind
     for idx,method in enumerate(classification_method_array):
         yPred = classificationMethod(method,X_train_counts,X_test_counts,df['Label'].iloc[train_index],train_index,test_index)
         averageAccurracyArray[idx] += accuracy_score(df['Label'].iloc[test_index],yPred)
-        print method, averageAccurracyArray[idx]
+        print method, accuracy_score(df['Label'].iloc[test_index],yPred)
 
 def writeStats(accuracyArray):
     outputDir = "output/"
