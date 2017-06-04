@@ -25,9 +25,9 @@ def classificationMethod(method,X_train_counts,X_test_counts,categories,train_in
     elif method == 'RandomForest':
         clf_cv = RandomForestClassifier(n_estimators=128).fit(X_train_counts,categories)# the best result for random forest
     elif method == 'SVM':
-        clf_cv = svm.SVC(kernel='linear', C=C,gamma=0.7).fit(X_train_counts,categories)
+        clf_cv = svm.SVC().fit(X_train_counts,categories)
+        #clf_cv = svm.SVC(kernel='linear', C=C,gamma=0.7).fit(X_train_counts,categories)
     yPred = clf_cv.predict(X_test_counts)#after training  try to predict
-
     return yPred;
 
 
@@ -66,17 +66,17 @@ def findLabel(df,test_df):
 # 10-fold Cross Validation with Accuracy
 
 def crossValidation(df, method, n_components):
-    
+
     avgAccuracy=0
     nFolds=10
     kf = KFold(n_splits=nFolds)
     fold = 0
 
     for train_index, test_index in kf.split(df):
-        
+
         df_data = df.drop('Label', 1)
         X_train_counts = df_data.iloc[train_index]
-        X_test_counts  = df_data.iloc[test_index]        
+        X_test_counts  = df_data.iloc[test_index]
 
         # X_train_counts = count_vect.transform(df['Content'].iloc[train_index])
         # X_train_counts = np.add(X_train_counts, count_vect.transform(df['Title'].iloc[train_index])*titleWeight)
@@ -102,8 +102,7 @@ def crossValidation(df, method, n_components):
 
 
 def runAllClassificationMethods(df,nFolds,X_train_counts,X_test_counts,train_index,test_index):
-    # classification_method_array=['naiveBayes','RandomForest','SVM']
-    classification_method_array=['naiveBayes','RandomForest']
+    classification_method_array=['naiveBayes','RandomForest','SVM']
     for idx,method in enumerate(classification_method_array):
         yPred = classificationMethod(method,X_train_counts,X_test_counts,df['Label'].iloc[train_index],train_index,test_index)
         averageAccurracyArray[idx] += accuracy_score(df['Label'].iloc[test_index],yPred)
@@ -116,8 +115,7 @@ def writeStats(accuracyArray):
     with open('output/EvaluationMetric_10fold.csv', 'wb') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        # writer.writerow(['Statistic Measure', 'Naive Bayes','Random Forest','SVM'])
-        writer.writerow(['Statistic Measure', 'Naive Bayes','Random Forest'])
+        writer.writerow(['Statistic Measure', 'Naive Bayes','Random Forest','SVM'])
         accuracyArray=['Accuracy']+accuracyArray
         writer.writerow(accuracyArray)
 
@@ -159,11 +157,11 @@ outputDir = "output/"
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
 
-averageAccurracyArray=[0,0]
+averageAccurracyArray=[0,0,0]
 
 # Choose between'ALL','naiveBayes','RandomForest' and 'SVM'
 #crossValidation(df_num,'SVM',2)
-crossValidation(df_num,'ALL',40)    
+crossValidation(df_num,'ALL',40)
 
 # Find Labels for testset
 
@@ -175,6 +173,3 @@ findLabel(df_num,test_df_num)
 print averageAccurracyArray
 
 #produceSVMstats(df)
-
-
-

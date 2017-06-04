@@ -1,2 +1,2 @@
-Statistic Measure,Naive Bayes,Random Forest
-Accuracy,0.7,0.7675
+Statistic Measure,Naive Bayes,Random Forest,SVM
+Accuracy,0.7,0.765,0.6913
