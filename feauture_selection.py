@@ -28,29 +28,28 @@ def informationGain(T,a):
 	# Find entropy of the whole dataset
 	H_T =  entropy(T)
 
-	print "\n", a, ":"
-
 	# Find count of values of the attribute a
 	values = T[a].value_counts().to_dict()
 	value_sum = 0
 
 	for v in values:
-		# print "rows with value", v ,": \n", T[T[a] == v]
-		print "values", values[v]
 		
 		# Find wv: the percentage of rows in the dataset where attibute a has the value v
 		wv = values[v]/len(T)
 
 		# Find entropy of the rows of the dataset where attribute a has the value v
 		H_v = entropy(T[T[a] == v])
-
-		print "Value ", v, " wv ", wv, "Entropy: ", H_v
 		
 		value_sum += wv*H_v
-		# print "=", value_sum
 
-	IG = H_T - value_sum
-	print "IG:",IG," = (H_T:",H_T, ") - (value_sum:",value_sum, ")"
+	IG = H_T - value_sum 
+
+	# Checks
+	# print "\n", a, ":"
+	# print "rows with value", v ,": \n", T[T[a] == v]
+	# print "values", values[v]
+	# print "Value ", v, " wv ", wv, "Entropy: ", H_v
+	# print "IG:",IG," = (H_T:",H_T, ")-(value_sum:",value_sum, ")"	
 	return IG
 
 
@@ -119,7 +118,6 @@ for feature in df_cat.columns:
 print "\nInformation Gains of all features:\n"
 for feature in sorted(infogain, key=infogain.get):
 	print '{: <15}'.format(feature),'{:f}'.format(infogain[feature])
-
 
 produceRemoveFeaturePlot(df_i, infogain)
 
