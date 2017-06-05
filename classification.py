@@ -40,6 +40,7 @@ def createTestSetCategoryCSV(id,predLabels):
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['Client_ID','Predicted_Label'])
         for idx,value in enumerate(id):
+            print id[idx], ": ", label_dict[predLabels[idx]]
             writer.writerow([id[idx],label_dict[predLabels[idx]]])
 
 # Find Label for the test dataset
@@ -49,8 +50,9 @@ def findLabel(df,test_df):
     X_train_counts = df.drop('Label', 1)
     X_test_counts = test_df.drop('Id', 1)
 
+    # Best classifier is RandomForest
+
     yPred = classificationMethod('RandomForest',X_train_counts,X_test_counts,df['Label'],44,44)
-    print yPred
     createTestSetCategoryCSV(test_df['Id'],yPred)
 
 # 10-fold Cross Validation with Accuracy
@@ -76,10 +78,13 @@ def crossValidation(df, method, n_components):
             # print(classification_report(yPred,df['Label'].iloc[test_index]))
             avgAccuracy+=accuracy_score(df['Label'].iloc[test_index],yPred)
         fold += 1
+    print "Average accuracy of "+ method
     if method=='ALL':
         produceStats(nFolds)
-    avgAccuracy=avgAccuracy/nFolds
-    print "Average accuracy of "+ method + ": ", avgAccuracy
+        print averageAccurracyArray
+    else:
+        avgAccuracy=avgAccuracy/nFolds
+        print avgAccuracy
     return avgAccuracy
 
 
@@ -124,20 +129,16 @@ def produceSVMstats(df):
     plt.show()
 
 
-
-# Main
+# Globals
 
 label_dict = {1: 'Good',2: 'Bad'}
 
 df = pd.read_csv('./dataSets/train.tsv', sep='\t', header=0)
 df = df.drop('Id',1) # Do not take into account the id in the classification
-#df=df.drop('Attribute1',1)
 
 # Convert all attributes to numerical
 
 df_num = pd.get_dummies(df)
-# print df_num
-# print "Columns: ", len(df_num.columns)
 
 outputDir = "output/"
 if not os.path.exists(outputDir):
@@ -145,17 +146,23 @@ if not os.path.exists(outputDir):
 
 averageAccurracyArray=[0,0,0]
 
-# Choose between'ALL','naiveBayes','RandomForest' and 'SVM'
-#crossValidation(df_num,'SVM',2)
-#crossValidation(df_num,'RandomForest',40)
+#  Execute code only when module is run directly, not imported
 
-# print averageAccurracyArray
+if __name__ == "__main__":
 
-# Find Labels for testset
+    print "\nRunning 10-fold cross validation for every classifier..."
+    crossValidation(df_num,'ALL', 40)
+    # Or choose between naiveBayes','RandomForest' and 'SVM'
+    #crossValidation(df_num,'SVM', 40)
+    #crossValidation(df_num,'RandomForest', 40)
 
-testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
-test_df_num = pd.get_dummies(testdf)
+    # Find Labels for testset
 
-findLabel(df_num,test_df_num)
+    print "\nFinding labels for test set..."
 
-# produceSVMstats(df)
+    testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
+    test_df_num = pd.get_dummies(testdf)
+
+    findLabel(df_num,test_df_num)
+
+
