@@ -142,10 +142,33 @@ def produceSVMstats(df):
     plt.show()
 
 
+
+def produceRemoveFeaturePlot(df):
+    columnsList=[]
+    accuracyList=[]
+    col=1;
+    for column in df:
+        if column!='Label':
+            df=df.drop(column,1)
+            print df.shape
+            df_num = pd.get_dummies(df)
+            accuracyList.append(crossValidation(df_num,'RandomForest',40))
+            columnsList.append(col)
+            col=col+1;
+            if col==20:
+                break
+    plt.ylim([0.5, 1.0])
+    plt.xlim([0.0,40.0])
+    plt.xlabel('Number of features removed')
+    plt.ylabel('Accuracy')
+    width = 1
+    plt.bar(columnsList,accuracyList, width, color="blue")
+    plt.show()
 # Main
 
 df = pd.read_csv('./dataSets/train.tsv', sep='\t', header=0)
 df = df.drop('Id',1) # Do not take into account the id in the classification
+#df=df.drop('Attribute1',1)
 
 # Convert all attributes to numerical
 
@@ -161,14 +184,15 @@ averageAccurracyArray=[0,0,0]
 
 # Choose between'ALL','naiveBayes','RandomForest' and 'SVM'
 #crossValidation(df_num,'SVM',2)
-crossValidation(df_num,'ALL',40)
+#crossValidation(df_num,'RandomForest',40)
+produceRemoveFeaturePlot(df)
 
 # Find Labels for testset
 
 testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
 test_df_num = pd.get_dummies(testdf)
 
-findLabel(df_num,test_df_num)
+#findLabel(df_num,test_df_num)
 
 print averageAccurracyArray
 
