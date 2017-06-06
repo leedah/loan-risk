@@ -43,6 +43,7 @@ def createTestSetCategoryCSV(id,predLabels):
             print id[idx], ": ", label_dict[predLabels[idx]]
             writer.writerow([id[idx],label_dict[predLabels[idx]]])
 
+
 # Find Label for the test dataset
 
 def findLabel(df,test_df):
@@ -100,7 +101,7 @@ def writeStats(accuracyArray):
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
     with open('output/EvaluationMetric_10fold.csv', 'wb') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',',
+        writer = csv.writer(csvfile, delimiter='\t',
                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['Statistic Measure', 'Naive Bayes','Random Forest','SVM'])
         accuracyArray=['Accuracy']+accuracyArray
@@ -111,22 +112,6 @@ def produceStats(nFolds):
         averageAccurracyArray[idx]
         averageAccurracyArray[idx] = round(averageAccurracyArray[idx]/nFolds,5)
     writeStats(averageAccurracyArray)
-
-
-def produceSVMstats(df):
-    componentsList = [2,3,4,5,6,10,20,30,40,50,60,70,80,90,100,300,400]  #componentsList = [100,110,120,130]
-    accuracyList=[]
-    for idx,value in enumerate(componentsList):
-        accuracyList.append(crossValidation(df,'SVM',value))
-    print accuracyList
-    plt.ylim([0.0, 1.0])
-    plt.xlim([0.0,20.0])
-    plt.xlabel('Components')
-    plt.ylabel('Accuracy')
-    width = 1
-    plt.bar(componentsList,accuracyList, width, color="blue")
-    plt.savefig('output/LSIcomponentsAccuracy1')
-    plt.show()
 
 
 # Globals
@@ -150,7 +135,7 @@ averageAccurracyArray=[0,0,0]
 
 if __name__ == "__main__":
 
-    print "\nRunning 10-fold cross validation for every classifier..."
+    print "\nRunning 10-fold cross validation for every classifier.."
     crossValidation(df_num,'ALL', 40)
     # Or choose between naiveBayes','RandomForest' and 'SVM'
     #crossValidation(df_num,'SVM', 40)
@@ -158,7 +143,7 @@ if __name__ == "__main__":
 
     # Find Labels for testset
 
-    print "\nFinding labels for test set..."
+    print "\nFinding labels for test set.."
 
     testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
     test_df_num = pd.get_dummies(testdf)
