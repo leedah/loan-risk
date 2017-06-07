@@ -3,7 +3,7 @@ import pandas as pd
 import math
 import os
 import matplotlib.pyplot as plt
-from classification import crossValidation
+from classification import crossValidation, findLabel
 
 
 def entropy(df):
@@ -65,13 +65,12 @@ def produceRemoveFeaturePlot(df, infogain):
 
     for feature in sorted(infogain, key=infogain.get):
         df=df.drop(feature,1)
-        # print "\nDropping ", feature
+        print "\nDropping ", feature
         col -= 1
         if(col == 0):
         	break
         df_num = pd.get_dummies(df)
         accuracyList.append(crossValidation(df_num,'RandomForest',40))
-
         columnsList.append(col)
         my_xticks.append(feature)
 
@@ -119,7 +118,15 @@ print "\nInformation Gains of all features:\n"
 for feature in sorted(infogain, key=infogain.get):
 	print '{: <15}'.format(feature),'{:f}'.format(infogain[feature])
 
+print"\n"
+
 produceRemoveFeaturePlot(df_i, infogain)
+
+
+
+
+
+
 
 
 

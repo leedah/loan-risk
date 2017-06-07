@@ -1,17 +1,13 @@
 import pandas as pd
 import os
 import csv
-from sklearn.decomposition import TruncatedSVD
 import numpy as np
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import svm
 from sklearn.model_selection import KFold
-from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
-from sklearn.metrics.pairwise import euclidean_distances
-from collections import Counter
 import matplotlib.pyplot as plt
 from matplotlib import style
 style.use("ggplot")
@@ -19,14 +15,12 @@ style.use("ggplot")
 
 def classificationMethod(method,X_train_counts,X_test_counts,categories,train_index,test_index):
     yPred=None;
-    C = 2.0
     if method == 'naiveBayes':
         clf_cv = GaussianNB().fit(X_train_counts,categories)
     elif method == 'RandomForest':
-        clf_cv = RandomForestClassifier(n_estimators=128).fit(X_train_counts,categories)# the best result for random forest
+        clf_cv = RandomForestClassifier(n_estimators=120).fit(X_train_counts,categories)# the best result for random forest
     elif method == 'SVM':
-        clf_cv = svm.SVC().fit(X_train_counts,categories)
-        #clf_cv = svm.SVC(kernel='linear', C=C,gamma=0.7).fit(X_train_counts,categories)
+        clf_cv = svm.SVC(C=1.5, gamma=0.5).fit(X_train_counts,categories)
     yPred = clf_cv.predict(X_test_counts)#after training  try to predict
     return yPred;
 
@@ -76,10 +70,9 @@ def crossValidation(df, method, n_components):
             runAllClassificationMethods(df,nFolds,X_train_counts,X_test_counts,train_index,test_index)
         else:
             yPred = classificationMethod(method,X_train_counts,X_test_counts,df['Label'].iloc[train_index],train_index,test_index)
-            # print(classification_report(yPred,df['Label'].iloc[test_index]))
             avgAccuracy+=accuracy_score(df['Label'].iloc[test_index],yPred)
         fold += 1
-    print "Average accuracy of "+ method
+    # print "Average accuracy of "+ method
     if method=='ALL':
         produceStats(nFolds)
         print averageAccurracyArray
@@ -143,11 +136,11 @@ if __name__ == "__main__":
 
     # Find Labels for testset
 
-    print "\nFinding labels for test set.."
+    # print "\nFinding labels for test set.."
 
-    testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
-    test_df_num = pd.get_dummies(testdf)
+    # testdf =pd.read_csv('dataSets/test.tsv', sep='\t')
+    # test_df_num = pd.get_dummies(testdf)
 
-    findLabel(df_num,test_df_num)
+    # findLabel(df_num,test_df_num)
 
 
