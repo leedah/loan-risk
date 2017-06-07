@@ -65,7 +65,7 @@ def produceRemoveFeaturePlot(df, infogain):
 
     for feature in sorted(infogain, key=infogain.get):
         df=df.drop(feature,1)
-        print "\nDropping ", feature
+        # print "\nDropping ", feature
         col -= 1
         if(col == 0):
         	break
@@ -79,12 +79,12 @@ def produceRemoveFeaturePlot(df, infogain):
     fig.canvas.set_window_title('Accuracy plot')
 
     plt.ylim([0.6, 0.8])
-    plt.xlim([20,0])
-    plt.title('Accuracy plot')
-    plt.xlabel('Feature removed')
+    plt.xlim([21,0])
+    plt.title('Average accuracy of Random Forest')
+    plt.xlabel('Number of features')
     plt.ylabel('Accuracy')  
-    plt.xticks(columnsList, my_xticks, size='small', rotation = 45)
-    width = 0.8
+    plt.xticks(columnsList, columnsList, size='small')
+    width = 0.9
 
     plt.bar(columnsList,accuracyList, width, color="#00cc99")
     plt.show()
