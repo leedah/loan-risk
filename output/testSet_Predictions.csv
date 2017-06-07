@@ -11,9 +11,9 @@ Client_ID	Predicted_Label
 10911	Good
 10912	Good
 10913	Good
-10914	Bad
+10914	Good
 10915	Bad
-10916	Good
+10916	Bad
 10917	Good
 10918	Good
 10919	Bad
@@ -120,7 +120,7 @@ Client_ID	Predicted_Label
 11020	Good
 11021	Good
 11022	Good
-11023	Good
+11023	Bad
 11024	Good
 11025	Bad
 11026	Bad
@@ -132,8 +132,8 @@ Client_ID	Predicted_Label
 11032	Good
 11033	Good
 11034	Good
-11035	Good
-11036	Bad
+11035	Bad
+11036	Good
 11037	Good
 11038	Good
 11039	Bad
@@ -159,7 +159,7 @@ Client_ID	Predicted_Label
 11059	Good
 11060	Good
 11061	Good
-11062	Good
+11062	Bad
 11063	Good
 11064	Good
 11065	Good
@@ -184,14 +184,14 @@ Client_ID	Predicted_Label
 11084	Good
 11085	Good
 11086	Bad
-11087	Bad
+11087	Good
 11088	Good
 11089	Good
 11090	Good
 11091	Good
 11092	Good
 11093	Good
-11094	Good
+11094	Bad
 11095	Good
 11096	Good
 11097	Good
